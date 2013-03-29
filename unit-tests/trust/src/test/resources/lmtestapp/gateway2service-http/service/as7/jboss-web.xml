@@ -1,0 +1,7 @@
+<jboss-web>
+  <context-root>/service</context-root>
+  <security-domain>service</security-domain>
+  <valve>
+    <class-name>org.picketlink.identity.federation.bindings.tomcat.PicketLinkAuthenticator</class-name>
+  </valve>
+</jboss-web>

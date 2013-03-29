@@ -21,19 +21,16 @@
  */
 package org.picketlink.test.trust.tests;
 
-import static org.picketlink.test.integration.util.TestUtil.getServerAddress;
-import static org.picketlink.test.integration.util.PicketLinkConfigurationUtil.addKeyStoreAlias;
-import static org.picketlink.test.integration.util.PicketLinkConfigurationUtil.addValidatingAlias;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
+import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
@@ -58,15 +55,16 @@ import org.picketlink.test.trust.servlet.ServiceServlet;
  * @since Aug 29, 2012
  */
 
+@ServerSetup({})
 @RunWith(PicketLinkIntegrationTests.class)
-@TargetContainers({ "eap5" })
-public class Gateway2ServiceHttpUnitTestCase extends Gateway2ServiceHttpUnitCommon {
+@TargetContainers({"jbas7","eap6"})
+public class Gateway2ServiceHttpUnitAS7TestCase extends Gateway2ServiceHttpUnitCommon {
 
-    protected static final Logger log = Logger.getLogger(Gateway2ServiceHttpUnitTestCase.class);
+    protected static final Logger log = Logger.getLogger(Gateway2ServiceHttpUnitAS7TestCase.class);
 
     // for actuall tests see Gateway2ServiceHttpUnitCommon class
     
-
+/*
     @Deployment(name = "g2s-http-sec-domains.jar", testable = false, order = 2)
     @TargetsContainer("jboss")
     public static JavaArchive deployTestScenario1() throws IOException {
@@ -76,14 +74,20 @@ public class Gateway2ServiceHttpUnitTestCase extends Gateway2ServiceHttpUnitComm
         //ts.as(ZipExporter.class).exportTo(new File(ts.getName()), true);
         return ts;
     }
-
+*/
     @Deployment(name = "gateway.war", testable = false, order = 4)
     @TargetsContainer("jboss")
-    public static WebArchive deployGatewayApp() throws IOException {
+    public static WebArchive deployGatewayApp() throws IOException { 
+        
+        Collection<JavaArchive> httpClientDeps = MavenArtifactUtil.getArtifact("org.apache.httpcomponents:httpclient:jar:4.2.1");
+        
         WebArchive war = ShrinkWrap.create(WebArchive.class, "gateway.war");
         war.addClass(GatewayServlet.class);
+        war.addClass(TokenSupplierTestLoginModule.class);
+        war.addAsLibraries(httpClientDeps);
         war.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/lmtestapp/gateway2service-http/gateway/jboss-web.xml"));
         war.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/lmtestapp/gateway2service-http/gateway/web.xml"));
+        war.addAsManifestResource(new File("../../unit-tests/trust/target/test-classes/jboss-deployment-structure.xml"));
         //war.as(ZipExporter.class).exportTo(new File(war.getName()), true);
         return war;
     }
@@ -93,9 +97,10 @@ public class Gateway2ServiceHttpUnitTestCase extends Gateway2ServiceHttpUnitComm
     public static WebArchive deployServiceApp() throws IOException {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "service.war");
         war.addClass(ServiceServlet.class);
-        war.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/lmtestapp/gateway2service-http/service/jboss-web.xml"));
+        war.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/lmtestapp/gateway2service-http/service/as7/jboss-web.xml"));
         war.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/lmtestapp/gateway2service-http/service/web.xml"));
         war.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/lmtestapp/gateway2service-http/service/context.xml"));
+        war.addAsManifestResource(new File("../../unit-tests/trust/target/test-classes/jboss-deployment-structure.xml"));
         //war.as(ZipExporter.class).exportTo(new File(war.getName()), true);
         return war;
     }
@@ -109,14 +114,9 @@ public class Gateway2ServiceHttpUnitTestCase extends Gateway2ServiceHttpUnitComm
     @Deployment(name = "picketlink-sts", testable = false)
     @TargetsContainer("jboss")
     public static WebArchive createSTSDeployment() throws GeneralSecurityException, IOException {
-        WebArchive sts = MavenArtifactUtil.getQuickstartsMavenArchive("picketlink-sts");
-        
-        addValidatingAlias(sts, "/WEB-INF/classes/picketlink-sts.xml", getServerAddress(), getServerAddress());
-        addKeyStoreAlias(sts, "/WEB-INF/classes/sts_keystore.jks", "sts", "testpass", getServerAddress());
+        WebArchive sts = TrustTestsBase.createSTSDeployment();
         PicketLinkConfigurationUtil.addSAML20TokenRoleAttributeProvider(sts, "/WEB-INF/classes/picketlink-sts.xml", "Role");
-
         //sts.as(ZipExporter.class).exportTo(new File("picketlink-sts.war"), true);
-        
         return sts;
     }
 

@@ -10,8 +10,8 @@
 		<version.picketlink.quickstarts>${version.picketlink}</version.picketlink.quickstarts>
 
 		<!-- Current version of JBoss AS7 used during the tests. -->
-		<version.jboss_as7>7.1.1.Final</version.jboss_as7>
-
+		<version.jboss_as7>7.1.3.Final</version.jboss_as7>
+		<version.jboss-client>${version.jboss_as7}</version.jboss-client>
 		<!-- Current version of JBoss AS5 used during the tests. -->
 		<version.jboss_as5>5.1.0.GA</version.jboss_as5>
 
@@ -22,17 +22,17 @@
 		<version.tomcat_6>6.0.26</version.tomcat_6>
 
 		<!-- Test dependencies version. -->
-		<version.arqillian_jboss_as>7.1.1.Final</version.arqillian_jboss_as>
-		<version.arquillian>1.0.0.CR7</version.arquillian>
+		<version.arqillian_jboss_as>7.1.3.Final</version.arqillian_jboss_as>
+		<version.arquillian>1.0.3.Final</version.arquillian>
 		<version.arquillian_drone>1.0.0.CR4</version.arquillian_drone>
 		<version.junit>4.8.1</version.junit>
 		<!-- Possible binaries and paths to find them. Feel free to override with export MAVEN_OPTS="-Dxx=yy" -->
 		<eap5-dist-zip>jboss-eap-noauth-5.2.0-ER6.zip</eap5-dist-zip>
 		<eap5-dist-url>http://download.devel.redhat.com/devel/candidates/JBEAP/5.2.0.ER6/${eap5-dist-zip}</eap5-dist-url>
 		<eap5-dir-structure>jboss-eap-5.2/jboss-as</eap5-dir-structure>
-		<eap6-dist-zip>jboss-eap-6.0.1.zip</eap6-dist-zip>
-		<eap6-dist-url>http://download.devel.redhat.com/released/JBEAP-6/6.0.1/zip/${eap6-dist-zip}</eap6-dist-url>
-		<eap6-dir-structure>jboss-eap-6.0</eap6-dir-structure>
+		<eap6-dist-zip>jboss-eap-6.1.0.ER2.zip</eap6-dist-zip>
+		<eap6-dist-url>file:///opt/jboss-zips/${eap6-dist-zip}</eap6-dist-url>
+		<eap6-dir-structure>jboss-eap-6.1</eap6-dir-structure>
 	</properties>
 
 	<dependencyManagement>

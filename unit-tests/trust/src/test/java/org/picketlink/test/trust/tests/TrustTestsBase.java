@@ -28,8 +28,6 @@ import static org.picketlink.test.integration.util.TestUtil.getServerAddress;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
 import org.picketlink.identity.federation.api.wstrust.WSTrustClient;
@@ -50,8 +48,16 @@ import org.w3c.dom.Element;
 @RunWith(PicketLinkIntegrationTests.class)
 public abstract class TrustTestsBase {
     
-    @Deployment(name = "picketlink-sts", testable = false)
-    @TargetsContainer("jboss")
+    /**
+     * picketlink-sts.war deployment creation. 
+     * All methods overriding this class should annotate their deployment like this:
+     *   @Deployment(name = "picketlink-sts", testable = false)
+     *   @TargetsContainer("jboss")  
+     * 
+     * @return WebArchive of STS deployment.
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
     public static WebArchive createSTSDeployment() throws GeneralSecurityException, IOException {
         WebArchive sts = MavenArtifactUtil.getQuickstartsMavenArchive("picketlink-sts");
         

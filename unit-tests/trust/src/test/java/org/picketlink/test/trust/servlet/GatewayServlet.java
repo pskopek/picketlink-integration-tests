@@ -25,6 +25,7 @@ package org.picketlink.test.trust.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.security.auth.Subject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +37,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.logging.Logger;
-import org.jboss.security.SecurityAssociation;
+import org.picketlink.identity.federation.bindings.jboss.subject.PicketLinkJBossSubjectInteraction;
 import org.picketlink.identity.federation.core.util.Base64;
 import org.picketlink.identity.federation.core.wstrust.SamlCredential;
 
@@ -88,7 +89,7 @@ public class GatewayServlet extends HttpServlet {
         out.println("UserPrincipal="+req.getUserPrincipal().getName());
         out.println("--------------------------------------");
      
-        Subject subject = SecurityAssociation.getSubject();
+        Subject subject = new PicketLinkJBossSubjectInteraction().get();
         if (subject != null) {
             out.println("Subject="+subject);
             out.println("--------------------------------------");
@@ -149,7 +150,7 @@ public class GatewayServlet extends HttpServlet {
     }
     
     private SamlCredential getSamlToken() {
-        Subject subject = SecurityAssociation.getSubject();
+        Subject subject = new PicketLinkJBossSubjectInteraction().get();
         for (Object c: subject.getPublicCredentials()) {
             if (c instanceof SamlCredential)
                 return (SamlCredential)c;

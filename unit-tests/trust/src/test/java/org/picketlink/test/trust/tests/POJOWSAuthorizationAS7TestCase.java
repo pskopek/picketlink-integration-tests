@@ -22,6 +22,8 @@
 package org.picketlink.test.trust.tests;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
@@ -59,6 +61,12 @@ public class POJOWSAuthorizationAS7TestCase extends AbstractPOJOWSAuthorizationT
         archive.addAsWebInfResource(new File("../../unit-tests/trust/target/test-classes/props/sts-config.properties"), ArchivePaths.create("classes/sts-config.properties"));
 
         return archive;
+    }
+    
+    @Deployment(name = "picketlink-sts", testable = false)
+    @TargetsContainer("jboss")
+    public static WebArchive createSTSDeployment() throws GeneralSecurityException, IOException {
+        return TrustTestsBase.createSTSDeployment();
     }
 
 }

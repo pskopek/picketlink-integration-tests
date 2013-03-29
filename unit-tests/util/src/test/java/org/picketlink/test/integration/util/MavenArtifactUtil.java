@@ -22,11 +22,13 @@
 
 package org.picketlink.test.integration.util;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
@@ -97,4 +99,7 @@ public class MavenArtifactUtil {
         return DependencyResolvers.use(MavenDependencyResolver.class);
     }
 
+    public static Collection<JavaArchive> getArtifact(String gav) {
+        return getMavenArchiveResolver().artifact(gav).goOffline().resolveAs(JavaArchive.class);
+    }
 }

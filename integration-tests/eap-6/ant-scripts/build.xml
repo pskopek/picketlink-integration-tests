@@ -6,6 +6,7 @@
 	<property name="JBAS7_DEPLOY" location="${JBAS7_PROFILE_DIR}/deployments" />
 
 	<target name="prepare-test-environment" depends="unzip-jboss">
+		<copy file="${basedir}/../../unit-tests/trust/src/test/resources/lmtestapp/gateway2service-http/localValidationDomainKeyStore/stspub.jks" todir="${JBAS7_PROFILE_DIR}/configuration" />
 		<echo>Integration Test Environment for EAP6 PREPARED</echo>
 		<ant antfile="../ant-scripts/build.xml" inheritAll="true" />
 	</target>

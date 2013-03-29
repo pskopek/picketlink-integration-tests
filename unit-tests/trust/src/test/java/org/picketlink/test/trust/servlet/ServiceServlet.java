@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jboss.security.SecurityAssociation;
+import org.picketlink.identity.federation.bindings.jboss.subject.PicketLinkJBossSubjectInteraction;
 
 /**
  * Service Application Servlet
@@ -53,7 +53,7 @@ public class ServiceServlet extends HttpServlet {
         out.println("UserPrincipal="+req.getUserPrincipal().getName());
         out.println("--------------------------------------");
      
-        Subject subject = SecurityAssociation.getSubject();
+        Subject subject = new PicketLinkJBossSubjectInteraction().get();
         if (subject != null) {
             out.println("Subject="+subject);
             out.println("--------------------------------------");
