@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- XSLT file to add the security domains to the standalone.xml used during the integration tests. -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:as="urn:jboss:domain:1.4" xmlns:sd="urn:jboss:domain:security:1.2" version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:as="urn:jboss:domain:1.4" 
+                xmlns:sd="urn:jboss:domain:security:1.2" 
+                xmlns:r="urn:jboss:domain:remoting:1.1" 
+                version="1.0">
 
   <xsl:output method="xml" indent="yes" />
 
-  <xsl:template match="//as:profile/sd:subsystem/sd:security-domains/sd:security-domain[@name='idp']" />
-  <xsl:template match="//as:profile/sd:subsystem/sd:security-domains/sd:security-domain[@name='sp']" />
-  <xsl:template match="//as:profile/sd:subsystem/sd:security-domains/sd:security-domain[@name='picketlink-sts']" />
+  <xsl:template match="as:profile/r:subsystem/r:connector">
+      <connector name="remoting-connector" socket-binding="remoting" security-realm="SAMLRealm"/>
+  </xsl:template>
+  
+
+  <xsl:template match="as:management/as:security-realms">
+      <security-realms>
+        <xsl:apply-templates select="@* | *" />   
+        <security-realm name="SAMLRealm">
+          <authentication>
+            <jaas name="ejb-remoting-sts"/>
+          </authentication>
+        </security-realm>
+      </security-realms>        
+  </xsl:template>
 
   <xsl:template match="as:profile/sd:subsystem/sd:security-domains">
     <security-domains>
@@ -109,6 +125,28 @@
           <xsl:attribute name="keystore-type">JKS</xsl:attribute>
           <xsl:attribute name="server-alias">sts</xsl:attribute>
         </xsl:element>
+      </security-domain>
+      <security-domain name="ejb-remoting-sts" cache-type="default">
+         <authentication>
+              <login-module code="org.picketlink.identity.federation.bindings.jboss.auth.SAML2STSLoginModule" flag="required" module="org.picketlink">
+                 <module-option name="password-stacking" value="useFirstPass"/>
+                 <xsl:element name="module-option">
+                  <xsl:attribute name="name">configFile</xsl:attribute>
+                  <xsl:attribute name="value">${jboss.server.config.dir}/sts-config.properties</xsl:attribute>
+                 </xsl:element>
+              </login-module>
+              <login-module code="UsersRoles" flag="required">
+                 <module-option name="password-stacking" value="useFirstPass"/>
+                 <xsl:element name="module-option">
+                  <xsl:attribute name="name">usersProperties</xsl:attribute>
+                  <xsl:attribute name="value">${jboss.server.config.dir}/ejb-sts-users.properties</xsl:attribute>
+                 </xsl:element>
+                 <xsl:element name="module-option">
+                  <xsl:attribute name="name">rolesProperties</xsl:attribute>
+                  <xsl:attribute name="value">${jboss.server.config.dir}/ejb-sts-roles.properties</xsl:attribute>
+                 </xsl:element>
+              </login-module>              
+         </authentication>
       </security-domain>
 
       <xsl:apply-templates select="@* | *" />

@@ -26,7 +26,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Remote;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 
 import org.jboss.ejb3.annotation.SecurityDomain;
 
@@ -38,7 +37,7 @@ import org.jboss.ejb3.annotation.SecurityDomain;
  */
 @Stateless
 @Remote (EchoService.class)
-@SecurityDomain ("sts")
+@SecurityDomain ("ejb-remoting-sts")
 public class EchoServiceImpl implements EchoService {
     
     @Resource
